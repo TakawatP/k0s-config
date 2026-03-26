@@ -32,3 +32,57 @@
 1. ติดตั้ง Keepalived:
    ```bash
    sudo apt-get update && sudo apt-get install keepalived -y
+2. แก้ไขไฟล์คอนฟิก /etc/keepalived/keepalived.conf (ตามตัวอย่างในโปรเจกต์)
+3. Restart Service:
+   ```bash
+   sudo systemctl enable --now keepalived
+   
+### Step 2: ตรวจสอบการเชื่อมต่อ SSH
+
+1. ตรวจสอบว่าเครื่องของคุณสามารถ SSH เข้าไปยัง Server :
+   ```bash
+   ssh root@192.168.1.10  # ทดสอบกับทุก IP ใน Cluster
+   
+### Step 3: ติดตั้ง Kubernetes Cluster ด้วย k0sctl
+
+1. เปิด Terminal ในโฟลเดอร์ที่มีไฟล์ k0sctl.yaml แล้วรันคำสั่ง:
+```bash
+# สำหรับ Windows (Git Bash)
+./k0sctl.exe apply --config k0sctl.yaml
+
+# สำหรับ Linux/macOS
+k0sctl apply --config k0sctl.yaml
+```
+
+### Step 4: ตั้งค่าการเข้าถึง Cluster (Kubeconfig)
+
+1. เมื่อติดตั้งเสร็จเรียบร้อย ให้ดึงไฟล์คอนฟิกมาใช้งาน:
+```bash
+./k0sctl.exe kubeconfig > kubeconfig.yaml
+export KUBECONFIG=$PWD/kubeconfig.yaml
+```
+
+### 🔍 Verification
+
+ตรวจสอบสถานะของ Cluster เพื่อยืนยันความถูกต้อง:
+```bash
+# ตรวจสอบ Nodes
+kubectl get nodes
+
+# ตรวจสอบ Pods ของระบบและ Ingress
+kubectl get pods -A
+
+# ตรวจสอบ Ingress Service (Port 31080/31443)
+kubectl get svc -n ingress-nginx
+```
+
+### 📖 Useful Commands
+ดู Logs ของ k0s บน Server:
+```bash
+sudo journalctl -u k0scontroller -f
+```
+ลบ Cluster (Reset): 
+```bash
+k0sctl reset --config k0sctl.yaml
+```
+อัปเกรด Cluster: แก้ไขเวอร์ชันใน k0sctl.yaml แล้วรัน apply อีกครั้ง
