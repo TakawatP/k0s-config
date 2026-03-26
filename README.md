@@ -77,6 +77,7 @@ kubectl get svc -n ingress-nginx
 ```
 
 ### 📖 Useful Commands
+
 ดู Logs ของ k0s บน Server:
 ```bash
 sudo journalctl -u k0scontroller -f
@@ -85,4 +86,5 @@ sudo journalctl -u k0scontroller -f
 ```bash
 k0sctl reset --config k0sctl.yaml
 ```
-อัปเกรด Cluster: แก้ไขเวอร์ชันใน k0sctl.yaml แล้วรัน apply อีกครั้ง
+อัปเกรด Cluster: 
+แก้ไขเวอร์ชันใน k0sctl.yaml แล้วรัน apply อีกครั้ง
