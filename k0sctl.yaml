@@ -6,19 +6,19 @@ spec:
   hosts:
     # --- Master Nodes (Controllers) ---
     - role: controller
-      ssh: { address: 192.168.1.10, user: root, keyPath: ~/.ssh/id_rsa }
+      ssh: { address: 192.168.1.10, user: root, keyPath: ~/.ssh/id_rsa } # IP ของ Master Node 1, ใช้ root และ keyPath หรือ password ตามที่ต้องการ
     - role: controller
-      ssh: { address: 192.168.1.11, user: root, keyPath: ~/.ssh/id_rsa }
+      ssh: { address: 192.168.1.11, user: root, keyPath: ~/.ssh/id_rsa } # IP ของ Master Node 2, ใช้ root และ keyPath หรือ password ตามที่ต้องการ
     - role: controller
-      ssh: { address: 192.168.1.12, user: root, keyPath: ~/.ssh/id_rsa }
+      ssh: { address: 192.168.1.12, user: root, keyPath: ~/.ssh/id_rsa } # IP ของ Master Node 3, ใช้ root และ keyPath หรือ password ตามที่ต้องการ
 
     # --- Worker Nodes ---
     - role: worker
-      ssh: { address: 192.168.1.20, user: root, keyPath: ~/.ssh/id_rsa }
+      ssh: { address: 192.168.1.20, user: root, keyPath: ~/.ssh/id_rsa } # IP ของ Worker Node 1, ใช้ root และ keyPath หรือ password ตามที่ต้องการ
     - role: worker
-      ssh: { address: 192.168.1.21, user: root, keyPath: ~/.ssh/id_rsa }
+      ssh: { address: 192.168.1.21, user: root, keyPath: ~/.ssh/id_rsa } # IP ของ Worker Node 2, ใช้ root และ keyPath หรือ password ตามที่ต้องการ
     - role: worker
-      ssh: { address: 192.168.1.22, user: root, keyPath: ~/.ssh/id_rsa }
+      ssh: { address: 192.168.1.22, user: root, keyPath: ~/.ssh/id_rsa } # IP ของ Worker Node 3, ใช้ root และ keyPath หรือ password ตามที่ต้องการ
 
   k0s:
     config:
@@ -28,7 +28,7 @@ spec:
           sans:
             - 192.168.1.100 # ใส่ VIP เข้าไปใน SSL Cert
             - 192.168.1.200 # IP ของ VIP ฝั่ง Worker
-            - k8s-api.cib.go.th # SAN สำหรับ DNS ของ API Server
+            - k8s-api.cib.go.th # SAN สำหรับ DNS ของ API Server(ถ้ามี)
         network:
           provider: calico # ใช้ Calico ตามที่ต้องการ
         extensions:
