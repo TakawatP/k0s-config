@@ -27,27 +27,7 @@ spec:
           externalAddress: 192.168.1.100 # IP ของ VIP ฝั่ง Master
           sans:
             - 192.168.1.100 # ใส่ VIP เข้าไปใน SSL Cert
-            - 192.168.1.200 # IP ของ VIP ฝั่ง Worker
             - k8s-api.cib.go.th # SAN สำหรับ DNS ของ API Server(ถ้ามี)
         network:
           provider: calico # ใช้ Calico ตามที่ต้องการ
-        extensions:
-          helm:
-            repositories:
-              - name: ingress-nginx
-                url: https://kubernetes.github.io/ingress-nginx
-            charts:
-              - name: ingress-nginx
-                chartname: ingress-nginx/ingress-nginx
-                namespace: ingress-nginx
-                values: |
-                  controller:
-                    kind: DaemonSet
-                    hostNetwork: true
-                    containerPort:
-                      http: 31080
-                      https: 31443
-                    service:
-                      type: ClusterIP
-                    config:
-                      use-forwarded-headers: "true"
+        
