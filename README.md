@@ -20,23 +20,34 @@
 - เตรียม SSH Private Key สำหรับรีโมทไปยัง Server ทุกเครื่อง
 
 ### 2. Server Nodes (Target Machines)
-- OS: Ubuntu 22.04 LTS หรือใหม่กว่า (แนะนำ)
-- สิทธิ์การเข้าถึง: `root` หรือ User ที่มีสิทธิ์ `sudo`
-- ปิด Firewall หรือเปิด Port ที่จำเป็น (6443, 2379-2380, 10250, 31080, 31443)
+- **OS:** Ubuntu 22.04 LTS หรือใหม่กว่า (แนะนำ)
+- **สิทธิ์การเข้าถึง:** `root` หรือ User ที่มีสิทธิ์ `sudo`
+- **Resources:**
+   - Master: 2 vCPU, 4GB RAM (ขั้นต่ำ)
+   - Worker: ตามความเหมาะสมของ Workload
+   - HAProxy VM: 1 vCPU, 1GB RAM
+- **Network:** ปิด Firewall หรือเปิด Port ที่จำเป็น (6443, 2379-2380, 10250, 31080, 31443)
 
 ---
 
 ## 🚀 Installation Steps
 
-### Step 1: ตั้งค่า High Availability (Keepalived)
-รันคำสั่งเหล่านี้บน **Server ทุกเครื่อง** เพื่อสร้าง Virtual IP
+### Step 1: ตั้งค่า External Load Balancer (HAProxy + Keepalived)
+ทำขั้นตอนนี้บน **HAProxy VM ทั้ง 2 เครื่อง** เพื่อทำตัวเป็นทางเข้าหลักของ Cluster
 
 1. ติดตั้ง Keepalived:
    ```bash
    sudo apt-get update && sudo apt-get install keepalived -y
-2. แก้ไขไฟล์คอนฟิก /etc/keepalived/keepalived.conf (ตามตัวอย่างในโปรเจกต์)
-3. Restart Service:
+2. ตั้งค่า Kernel: อนุญาตให้ Bind IP ที่ยังไม่อยู่ในเครื่อง (Non-local bind)
    ```bash
+   echo "net.ipv4.ip_nonlocal_bind = 1" | sudo tee -a /etc/sysctl.conf
+   sudo sysctl -p
+   ```
+3. แก้ไขไฟล์คอนฟิก /etc/keepalived/keepalived.conf เพื่อถือ VIP 100 และ 200
+4. Configure HAProxy: แก้ไข /etc/haproxy/haproxy.cfg เพื่อ Forward Traffic ไปยัง Masters (6443) และ Workers
+5. Restart Service:
+   ```bash
+   sudo systemctl restart haproxy
    sudo systemctl enable --now keepalived
    
 ### Step 2: ตรวจสอบการเชื่อมต่อ SSH
@@ -63,6 +74,10 @@ k0sctl apply --config k0sctl.yaml
 ./k0sctl.exe kubeconfig > kubeconfig.yaml
 export KUBECONFIG=$PWD/kubeconfig.yaml
 ```
+2. ตรวจสอบสถานะ:
+```bash
+kubectl get nodes -o wide
+```
 
 ### 🔍 Verification
 
@@ -74,6 +89,11 @@ kubectl get nodes
 # ตรวจสอบ Pods ของระบบ
 kubectl get pods -A
 ```
+
+ตรวจสอบ High Availability:
+- ทดลองสั่ง stop บริการ HAProxy หรือ Keepalived บนเครื่องที่เป็น MASTER
+- VIP ควรจะย้ายไปที่เครื่อง BACKUP อัตโนมัติ
+- ตรวจสอบว่า kubectl get nodes ยังคงทำงานได้ปกติผ่าน VIP 192.168.1.100
 
 ### 📖 Useful Commands
 
