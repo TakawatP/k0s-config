@@ -3,10 +3,12 @@
 เอกสารฉบับนี้อธิบายขั้นตอนการติดตั้ง Kubernetes Cluster แบบ High Availability (3 Masters, 3 Workers) โดยใช้ `k0s` และ `k0sctl` พร้อมการตั้งค่า Virtual IP (VIP) สำหรับ API Server และ Ingress Controller
 
 ## 📌 Cluster Architecture
-- **Control Plane:** 3 Nodes (Master 1-3) + Virtual IP (`192.168.1.100`)
-- **Worker Nodes:** 3 Nodes (Worker 1-3) + Virtual IP (`192.168.1.200`)
+- **Load Balancer (External):** 2 VMs (HAProxy + Keepalived)
+   - **VIP API Server:** 192.168.1.100 (Port 6443)
+   - **VIP Web Traffic:** 192.168.1.200 (Port 80, 443)
+- **Control Plane:** 3 Nodes (Master 1-3) 
+- **Worker Nodes:** 3 Nodes (Worker 1-3) 
 - **CNI:** Calico
-- **Ingress:** Ingress-NGINX (Port 31080 / 31443)
 
 ---
 
