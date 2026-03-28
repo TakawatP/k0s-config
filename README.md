@@ -69,11 +69,8 @@ export KUBECONFIG=$PWD/kubeconfig.yaml
 # ตรวจสอบ Nodes
 kubectl get nodes
 
-# ตรวจสอบ Pods ของระบบและ Ingress
+# ตรวจสอบ Pods ของระบบ
 kubectl get pods -A
-
-# ตรวจสอบ Ingress Service (Port 31080/31443)
-kubectl get svc -n ingress-nginx
 ```
 
 ### 📖 Useful Commands
